@@ -23,7 +23,7 @@ public class MemberServiceV1 {
 
     private void validation(Member toMember) {
         if(toMember.getMemberId().equals("ex")) {
-            throw new IllegalArgumentException("transfer error");
+            throw new IllegalStateException("transfer error");
         }
     }
 }
