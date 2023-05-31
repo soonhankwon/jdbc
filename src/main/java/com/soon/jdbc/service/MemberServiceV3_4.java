@@ -36,7 +36,6 @@ public class MemberServiceV3_4 {
     }
 
     public void testMethodWithNoTransactional(Member member) throws SQLException {
-        // transaction 미적용 메서드에서 save 로직
         memberRepository.save(member);
         Member findMember = memberRepository.findById(member.getMemberId());
         log.info("트랜잭션 애노테이션 미적용 코드");
@@ -48,6 +47,7 @@ public class MemberServiceV3_4 {
         testMethodWithTransactional("ok", findMember);
 
         // 2-1. transaction 적용 메서드 호출 후 exception -> transactional 미적용 메서드 rollback(X)
+        // update logic committed, save logic not rollback
         if(findMember.getMemberId().equals(member.getMemberId()))
             throw new IllegalStateException();
     }
