@@ -15,6 +15,17 @@ public class UnCheckedAppTest {
                 .isInstanceOf(RuntimeSQLException.class);
     }
 
+    @Test
+    void printEx() {
+        Controller controller = new Controller();
+        try {
+            controller.request();
+        } catch (Exception e) {
+            System.out.println("ex = " + e);
+            e.printStackTrace();
+        }
+    }
+
     static class Controller {
 
         Service service = new Service();
@@ -45,6 +56,7 @@ public class UnCheckedAppTest {
             try {
                 runSQL();
             } catch (SQLException e) {
+                // 기존 예외를 꼭 포함해줘야한다.
                 throw new RuntimeSQLException(e);
             }
         }
