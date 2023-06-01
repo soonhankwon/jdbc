@@ -4,6 +4,7 @@ import com.soon.jdbc.domain.Member;
 import com.soon.jdbc.repository.MemberRepository;
 import com.soon.jdbc.repository.MemberRepositoryV4_1;
 import com.soon.jdbc.repository.MemberRepositoryV4_2;
+import com.soon.jdbc.repository.MemberRepositoryV5;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class MemberServiceV4Test {
 
         @Bean
         MemberRepository memberRepository() {
-            return new MemberRepositoryV4_2(dataSource);
+            return new MemberRepositoryV5(dataSource);
         }
 
         @Bean
