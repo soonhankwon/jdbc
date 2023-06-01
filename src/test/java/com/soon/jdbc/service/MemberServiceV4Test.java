@@ -1,7 +1,8 @@
 package com.soon.jdbc.service;
 
 import com.soon.jdbc.domain.Member;
-import com.soon.jdbc.repository.MemberRepositoryV3;
+import com.soon.jdbc.repository.MemberRepository;
+import com.soon.jdbc.repository.MemberRepositoryV4_1;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,22 +13,22 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 
 import static com.soon.jdbc.service.MemberServiceV3_5Test.TestConfig.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * 트랜잭션 - DataSource, transactionManager auto register
+ * 예외 누수 문제 해결
+ * SQLException 제거
+ * MemberRepository 인터페이스 의존
  */
 @SpringBootTest
-class MemberServiceV3_5Test {
-
+class MemberServiceV4Test {
     @Autowired
-    private MemberRepositoryV3 memberRepository;
+    private MemberRepository memberRepository;
     @Autowired
-    private MemberServiceV3_3 memberService;
+    private MemberServiceV4 memberService;
 
     @TestConfiguration
     static class TestConfig {
@@ -42,19 +43,19 @@ class MemberServiceV3_5Test {
         }
 
         @Bean
-        MemberRepositoryV3 memberRepositoryV3() {
-            return new MemberRepositoryV3(dataSource);
+        MemberRepository memberRepository() {
+            return new MemberRepositoryV4_1(dataSource);
         }
 
         @Bean
-        MemberServiceV3_3 memberServiceV3_3() {
-            return new MemberServiceV3_3(memberRepositoryV3());
+        MemberServiceV4 memberServiceV4() {
+            return new MemberServiceV4(memberRepository());
         }
 
     }
 
     @AfterEach
-    void after() throws SQLException {
+    void after() {
         memberRepository.delete(MEMBER_A);
         memberRepository.delete(MEMBER_B);
         memberRepository.delete(MEMBER_EX);
@@ -70,7 +71,7 @@ class MemberServiceV3_5Test {
 
     @Test
     @DisplayName("정상 이체")
-    void accountTransfer() throws SQLException {
+    void accountTransfer() {
         Member memberA = new Member(MEMBER_A, 10000);
         Member memberB = new Member(MEMBER_B, 10000);
         memberRepository.save(memberA);
@@ -86,7 +87,7 @@ class MemberServiceV3_5Test {
 
     @Test
     @DisplayName("이체중 예외 발생")
-    void accountTransferEx() throws SQLException {
+    void accountTransferEx() {
         Member memberA = new Member(MEMBER_A, 10000);
         Member memberEx = new Member(MEMBER_EX, 10000);
         memberRepository.save(memberA);
